@@ -1,20 +1,109 @@
-// Project2_DAngeloFrancis.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
+//************************************************
+// TITLE: Course Grade                           *
+// FILE NAME: Project1_DAngeloFrancis.cpp        *
+// PROGRAMMER: D'Angelo Francis                  *
+// DATE: February 24th, 2025                     *
+// REQUIREMENTS:                         *
+//************************************************
 #include <iostream>
+#include <fstream>
+using namespace std;
 
-int main()
-{
-    std::cout << "Hello World!\n";
+struct Student {
+    string name;
+    double* pTestScores;
+    double average;
+    char grade;
+};
+
+Student* pGetData(ifstream& file, int& studentCount, int& testCount);
+void calculateAverage(Student* pStudents, int studentCount, int testCount);
+char getLetterGrade(double average);
+void displayGrades(Student* pStudents, int studentCount);
+void cleanUp(Student* pStudents, int studentCount);
+
+int main() {
+    ifstream inputFile;
+    string fileName;
+    int numStudents, numTests;
+
+    cout << "Enter the file name: ";
+    cin >> fileName;
+
+    inputFile.open(fileName);
+    if (!inputFile) {
+        cout << "Error: Could not open file." << endl;
+        return 1;
+    }
+
+    Student* pStudents = pGetData(inputFile, numStudents, numTests);
+    inputFile.close();
+
+    calculateAverage(pStudents, numStudents, numTests);
+    displayGrades(pStudents, numStudents);
+    cleanUp(pStudents, numStudents);
+
+    return 0;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+Student* pGetData(ifstream& file, int& studentCount, int& testCount) {
+    studentCount = 0;
+    testCount = 0;
+    string tempName;
+    double tempScore;
+    int currentTestCount = 0;
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+    while (file >> tempName) {
+        studentCount++;
+        currentTestCount = 0;
+        while (file >> tempScore) {
+            currentTestCount++;
+            if (file.peek() == '\n' || file.eof()) {
+                break;
+            }
+        }
+        if (testCount == 0) {
+            testCount = currentTestCount;
+        }
+    }
+    Student* pStudents = new Student[studentCount];
+
+    for (int i = 0; i < studentCount; i++) {
+        file >> pStudents[i].name;
+        pStudents[i].pTestScores = new double[testCount];
+
+        for (int j = 0; j < testCount; j++) {
+            file >> pStudents[i].pTestScores[j];
+        }
+    }
+
+    return pStudents;
+}
+void calculateAverage(Student* pStudents, int studentCount, int testCount) {
+    for (int i = 0; i < studentCount; i++) {
+        double total = 0;
+        for (int j = 0; j < testCount; j++) {
+            total += pStudents[i].pTestScores[j];
+        }
+        pStudents[i].average = total / testCount;
+        pStudents[i].grade = getLetterGrade(pStudents[i].average);
+    }
+}
+char getLetterGrade(double average) {
+    if (average >= 90) return 'A';
+    else if (average >= 80) return 'B';
+    else if (average >= 70) return 'C';
+    else if (average >= 60) return 'D';
+    else return 'F';
+}
+void displayGrades(Student* pStudents, int studentCount) {
+    for (int i = 0; i < studentCount; i++) {
+        cout << pStudents[i].name << " " << pStudents[i].average << " " << pStudents[i].grade << endl;
+    }
+}
+void cleanUp(Student* pStudents, int studentCount) {
+    for (int i = 0; i < studentCount; i++) {
+        delete[] pStudents[i].pTestScores;
+    }
+    delete[] pStudents;
+}
