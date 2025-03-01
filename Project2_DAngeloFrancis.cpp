@@ -3,8 +3,10 @@
 // FILE NAME: Project1_DAngeloFrancis.cpp        *
 // PROGRAMMER: D'Angelo Francis                  *
 // DATE: February 24th, 2025                     *
-// REQUIREMENTS:                         *
+// REQUIREMENTS: Make revisions of the grade book*
+// project to use structs instead                *
 //************************************************
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -16,11 +18,44 @@ struct Student {
     char grade;
 };
 
-Student* pGetData(ifstream& file, int& studentCount, int& testCount);
+//************************************************
+// Description of the function getData           *
+// This function reads data from a file          *
+//************************************************
+
+Student* getData(ifstream& file, int& studentCount, int& testCount);
+
+//************************************************
+// Description of the function calcualteAverage   *
+// This function calculates the grade average     *
+//************************************************
+
 void calculateAverage(Student* pStudents, int studentCount, int testCount);
+
+//************************************************
+// Description of the function getLetterGrade    *
+// This function gives a letter grade for average*
+//************************************************
+
 char getLetterGrade(double average);
+
+//************************************************
+// Description of the function displayGrades     *
+// This function displays the name and grade     *
+//************************************************
+
 void displayGrades(Student* pStudents, int studentCount);
+
+//************************************************
+// Description of the function cleanUp           *
+// This function cleans up the memory            *
+//************************************************
+
 void cleanUp(Student* pStudents, int studentCount);
+
+//************************************************
+// the main function.                            *
+//************************************************
 
 int main() {
     ifstream inputFile;
@@ -36,7 +71,7 @@ int main() {
         return 1;
     }
 
-    Student* pStudents = pGetData(inputFile, numStudents, numTests);
+    Student* pStudents = getData(inputFile, numStudents, numTests);
     inputFile.close();
 
     calculateAverage(pStudents, numStudents, numTests);
@@ -46,7 +81,7 @@ int main() {
     return 0;
 }
 
-Student* pGetData(ifstream& file, int& studentCount, int& testCount) {
+Student* getData(ifstream& file, int& studentCount, int& testCount) {
     studentCount = 0;
     testCount = 0;
     string tempName;
