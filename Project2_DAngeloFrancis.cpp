@@ -53,19 +53,6 @@ Student* pGetData(ifstream& file, int& studentCount, int& testCount) {
     double tempScore;
     int currentTestCount = 0;
 
-    while (file >> tempName) {
-        studentCount++;
-        currentTestCount = 0;
-        while (file >> tempScore) {
-            currentTestCount++;
-            if (file.peek() == '\n' || file.eof()) {
-                break;
-            }
-        }
-        if (testCount == 0) {
-            testCount = currentTestCount;
-        }
-    }
     Student* pStudents = new Student[studentCount];
 
     for (int i = 0; i < studentCount; i++) {
